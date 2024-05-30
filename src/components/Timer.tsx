@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { resetTest } from '../store/testSlice';
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 
 interface TimerProps {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import styled from 'styled-components';
+import Button from "@mui/material/Button";
 
 interface DetailedResponseQuestionProps {
     questionId: string;
@@ -28,7 +29,9 @@ export const DetailedResponseQuestion: React.FC<DetailedResponseQuestionProps> =
                 defaultValue=""
                 render={({ field }) => <StyledTextarea {...field} placeholder="Введите развернутый ответ" />}
             />
-            <StyledButton type="submit">Отправить</StyledButton>
+            <div>
+                <Button variant={"contained"} color={"error"} type="submit">Отправить</Button>
+            </div>
         </StyledForm>
     );
 };
@@ -44,15 +47,5 @@ const StyledTextarea = styled.textarea`
   margin: 10px 0;
   font-size: 16px;
   min-height: 100px;
-`;
-
-const StyledButton = styled.button`
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  &:hover {
-    background-color: #0056b3;
-  }
+  border: 1px solid gray;
 `;

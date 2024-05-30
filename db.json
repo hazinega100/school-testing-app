@@ -1,0 +1,36 @@
+{
+  "questions": [
+    {
+      "id": "1",
+      "type": "multiple-choice",
+      "text": "Что должен знать фронтенд-разработчик?",
+      "options": [
+        "HTML, CSS, JS",
+        "Kotlin, PHP, JS",
+        "React, Python, Ruby"
+      ]
+    },
+    {
+      "id": "2",
+      "type": "short-answer",
+      "text": "Что такое CRUD?"
+    },
+    {
+      "id": "3",
+      "type": "detailed-response",
+      "text": "Ворос 3"
+    },
+    {
+      "id": "4",
+      "type": "choosing-one-option",
+      "text": "Ворос 4"
+    }
+  ],
+  "answers": [
+    {
+      "id": "e069",
+      "questionId": "2",
+      "answer": "vdsv"
+    }
+  ]
+}

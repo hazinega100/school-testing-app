@@ -4,6 +4,7 @@ import { AppDispatch, RootState } from "../store/store";
 import { loadQuestions, nextQuestion, previousQuestion, resetTest, saveAnswerToServer } from "../store/testSlice";
 import { MultipleChoiceQuestion } from "../components/questions/MultipleChoiceQuestion";
 import { ShortAnswerQuestion } from "../components/questions/ShortAnswerQuestion";
+import { DetailedResponseQuestion } from "../components/questions/DetailedResponseQuestion";
 import styled from "styled-components";
 import { Timer } from "../components/Timer";
 import { Container } from "../components/Container";
@@ -47,6 +48,13 @@ export const TestPage: React.FC = () => {
                 )}
                 {question?.type === "short-answer" && (
                     <ShortAnswerQuestion
+                        onSubmit={handleAnswerSubmit}
+                        questionId={question.id}
+                        questionText={question.text}
+                    />
+                )}
+                {question?.type === "detailed-response" && (
+                    <DetailedResponseQuestion
                         onSubmit={handleAnswerSubmit}
                         questionId={question.id}
                         questionText={question.text}

@@ -1,10 +1,6 @@
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {fetchQuestions, submitAnswer} from "../api/questions";
-
-interface Answer {
-    questionId: string;
-    answer: string | string[];
-}
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from './store';
+import axios from 'axios';
 
 export interface Question {
     id: string;
@@ -14,51 +10,49 @@ export interface Question {
 }
 
 interface TestState {
-    answers: Answer[];
     questions: Question[];
     currentQuestion: number;
-    startTime: number;
     loading: boolean;
     error: string | null;
 }
 
 const initialState: TestState = {
-    answers: [],
     questions: [],
     currentQuestion: 0,
-    startTime: Date.now(),
     loading: false,
     error: null,
 };
 
 export const loadQuestions = createAsyncThunk('test/loadQuestions', async () => {
-    return await fetchQuestions();
+    const response = await axios.get<Question[]>('http://localhost:3001/questions');
+    return response.data;
 });
-
-export const saveAnswerToServer = createAsyncThunk(
-    'test/saveAnswerToServer',
-    async ({ questionId, answer }: { questionId: string; answer: string | string[] }) => {
-        await submitAnswer(questionId, answer);
-        return { questionId, answer };
-    }
-);
 
 const testSlice = createSlice({
     name: 'test',
     initialState,
     reducers: {
-        nextQuestion: (state) => {
-            state.currentQuestion += 1;
+        nextQuestion(state) {
+            if (state.currentQuestion < state.questions.length - 1) {
+                state.currentQuestion++;
+                localStorage.setItem('currentQuestion', state.currentQuestion.toString());
+            }
         },
-        previousQuestion: (state) => {
-            state.currentQuestion -= 1;
+        previousQuestion(state) {
+            if (state.currentQuestion > 0) {
+                state.currentQuestion--;
+                localStorage.setItem('currentQuestion', state.currentQuestion.toString());
+            }
         },
-        resetTest: (state) => {
-            state.answers = [];
+        resetTest(state) {
             state.currentQuestion = 0;
-            state.startTime = Date.now();
-            localStorage.removeItem('testTimer');
-            localStorage.removeItem('testTimeLeft');
+            localStorage.setItem('currentQuestion', '0');
+        },
+        setCurrentQuestion(state, action: PayloadAction<number>) {
+            state.currentQuestion = action.payload;
+            localStorage.setItem('currentQuestion', action.payload.toString());
+        },
+        saveAnswerToServer(state, action: PayloadAction<{ questionId: string; answer: string | string[] }>) {
         },
     },
     extraReducers: (builder) => {
@@ -67,24 +61,22 @@ const testSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(loadQuestions.fulfilled, (state, action: PayloadAction<Question[]>) => {
+            .addCase(loadQuestions.fulfilled, (state, action) => {
                 state.loading = false;
                 state.questions = action.payload;
             })
             .addCase(loadQuestions.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message || 'Failed to load questions';
-            })
-            .addCase(saveAnswerToServer.fulfilled, (state, action: PayloadAction<Answer>) => {
-                const existingAnswer = state.answers.find(a => a.questionId === action.payload.questionId);
-                if (existingAnswer) {
-                    existingAnswer.answer = action.payload.answer;
-                } else {
-                    state.answers.push(action.payload);
-                }
             });
     },
 });
 
-export const { nextQuestion, previousQuestion, resetTest } = testSlice.actions;
+export const { nextQuestion, previousQuestion, resetTest, setCurrentQuestion, saveAnswerToServer } = testSlice.actions;
+
 export default testSlice.reducer;
+
+export const selectCurrentQuestion = (state: RootState) => state.test.currentQuestion;
+export const selectQuestions = (state: RootState) => state.test.questions;
+export const selectLoading = (state: RootState) => state.test.loading;
+export const selectError = (state: RootState) => state.test.error;

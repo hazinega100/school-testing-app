@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
-import { loadQuestions, nextQuestion, previousQuestion, resetTest, saveAnswerToServer } from "../store/testSlice";
+import { loadQuestions, nextQuestion, previousQuestion, resetTest, saveAnswerToServer, setCurrentQuestion } from "../store/testSlice";
 import { MultipleChoiceQuestion } from "../components/questions/MultipleChoiceQuestion";
 import { ShortAnswerQuestion } from "../components/questions/ShortAnswerQuestion";
 import { DetailedResponseQuestion } from "../components/questions/DetailedResponseQuestion";
@@ -16,6 +16,10 @@ export const TestPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
+        const savedCurrentQuestion = localStorage.getItem('currentQuestion');
+        if (savedCurrentQuestion) {
+            dispatch(setCurrentQuestion(parseInt(savedCurrentQuestion)));
+        }
         dispatch(loadQuestions());
     }, [dispatch]);
 
